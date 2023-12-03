@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import WeatherApi from "./api/WeatherApi";
+import {setWeathers, weatherSlice} from "./store/WeatherSlice";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const weatherApi = new WeatherApi();
+
+    const dispatch = useDispatch();
+
+    const weathers = useSelector(state => state.weathers.weathers);
+
+    useEffect(() => {
+        weatherApi.getAllWeathers().then(response => dispatch(setWeathers(response.data)))
+    }, []);
+
+
+    return (
+        <div>
+            <ul>
+                {weathers.map((item) => {
+                    return <li>
+                        {item.summary}, {item.date}, {item.temperatureC}
+                    </li>
+                })}
+            </ul>
+        </div>
+    );
+};
 
 export default App;
